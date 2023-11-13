@@ -1,4 +1,4 @@
-import '../interface/IService.dart';
+import '../interface/i_service.dart';
 
 import '../../../data/repository/implementation/database_repository_impl.dart';
 import '../../../data/repository/implementation/genres_repository_impl.dart';

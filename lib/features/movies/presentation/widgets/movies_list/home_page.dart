@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../localization/dependency_handler.dart';
 import '../../../../../utils/enums/pages.dart';
 import '../../controller/movies_controller.dart';
 import '../common_widgets/drawer/home_drawer.dart';
