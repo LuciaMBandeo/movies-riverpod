@@ -1,14 +1,14 @@
-import '../../../data/repository/implementation/database_repository.dart';
-import '../../../data/repository/implementation/movies_repository.dart';
+import '../../../data/repository/implementation/database_repository_impl.dart';
+import '../../../data/repository/implementation/movies_repository_impl.dart';
 import '../../../domain/model/movie_model.dart';
 import '../../../presentation/states/data_state.dart';
-import '../service_interface.dart';
+import '../interface/IService.dart';
 
-class MoviesService implements IService {
-  final MoviesRepository moviesRepository;
-  final DatabaseRepository databaseRepository;
+class MoviesServiceImpl implements IService {
+  final IMoviesRepository moviesRepository;
+  final DatabaseRepositoryImpl databaseRepository;
 
-  MoviesService({
+  MoviesServiceImpl({
     required this.moviesRepository,
     required this.databaseRepository,
   });

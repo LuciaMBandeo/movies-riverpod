@@ -1,14 +1,15 @@
-import '../../../data/repository/implementation/database_repository.dart';
-import '../../../data/repository/implementation/genres_repository.dart';
+import '../interface/IService.dart';
+
+import '../../../data/repository/implementation/database_repository_impl.dart';
+import '../../../data/repository/implementation/genres_repository_impl.dart';
 import '../../../domain/model/genre_model.dart';
 import '../../../presentation/states/data_state.dart';
-import '../service_interface.dart';
 
-class GenresService implements IService {
-  final GenresRepository genresRepository;
-  final DatabaseRepository databaseRepository;
+class GenresServiceImpl implements IService {
+  final IGenresRepository genresRepository;
+  final DatabaseRepositoryImpl databaseRepository;
 
-  GenresService({
+  GenresServiceImpl({
     required this.genresRepository,
     required this.databaseRepository,
   });
