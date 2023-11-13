@@ -1,21 +1,24 @@
 import '../../../../../utils/enums/endpoints.dart';
 import '../../../../../utils/enums/states.dart';
 import '../../../presentation/states/data_state.dart';
-import '../../datasources/remote/api_service.dart';
+import '../../datasources/remote/api_data_source.dart';
 import '../../dto/result_dto.dart';
-import '../interfaces/i_movies_repository.dart';
 
-class MoviesRepository extends IMoviesRepository {
-  final ApiService apiService;
+abstract class IMoviesRepository {
+  Future<DataState<ResultDto>> fetchMovies(Endpoints chosenEndpoint);
+}
 
-  MoviesRepository({
-    required this.apiService,
+class MoviesRepositoryImpl extends IMoviesRepository {
+  final IApiDataSource apiDataSource;
+
+  MoviesRepositoryImpl({
+    required this.apiDataSource,
   });
 
   @override
   Future<DataState<ResultDto>> fetchMovies(Endpoints chosenEndpoint) async {
     try {
-      DataState<dynamic> result = await apiService.fetchMovieList(
+      DataState<dynamic> result = await apiDataSource.fetchMovieList(
         chosenEndpoint,
       );
       if (result.state == States.success) {

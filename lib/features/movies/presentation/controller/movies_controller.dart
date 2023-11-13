@@ -16,8 +16,8 @@ class MoviesController implements IController {
     required this.moviesService,
   });
 
-  final GenresService genresService;
-  final MoviesService moviesService;
+  final GenresServiceImpl genresService;
+  final MoviesServiceImpl moviesService;
   final _popularMovies =
       StreamController<DataState<List<MoviePreviewDto>>>.broadcast();
   final _topRatedMovies =

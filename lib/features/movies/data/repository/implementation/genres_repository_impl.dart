@@ -2,21 +2,24 @@ import 'dart:convert';
 
 import '../../../../../utils/enums/states.dart';
 import '../../../presentation/states/data_state.dart';
-import '../../datasources/remote/api_service.dart';
+import '../../datasources/remote/api_data_source.dart';
 import '../../dto/genre_dto.dart';
-import '../interfaces/i_genres_repository.dart';
 
-class GenresRepository implements IGenresRepository {
-  final ApiService apiService;
+abstract class IGenresRepository {
+  Future<DataState<List<GenreDto>>> fetchGenresList();
+}
 
-  GenresRepository({
-    required this.apiService,
+class GenresRepositoryImpl implements IGenresRepository {
+  final IApiDataSource apiDataSource;
+
+  GenresRepositoryImpl({
+    required this.apiDataSource,
   });
 
   @override
   Future<DataState<List<GenreDto>>> fetchGenresList() async {
     try {
-      DataState<dynamic> result = await apiService.fetchGenresList();
+      DataState<dynamic> result = await apiDataSource.fetchGenresList();
       if (result.state == States.success) {
         return DataSuccess(
           List<GenreDto>.from(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'localization/dependency_handler.dart';
 
@@ -9,22 +9,19 @@ void main() async {
   await dependencyHandler.initialize();
 
   runApp(
-    Provider(
-      create: (BuildContext context) => dependencyHandler,
-      child: const MyApp(),
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      //routes: MovieRouter.routes(),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    return const MaterialApp(
+        //routes: MovieRouter.routes(),
+        );
   }
 }

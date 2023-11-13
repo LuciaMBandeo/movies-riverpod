@@ -3,12 +3,25 @@ import '../../../domain/model/genre_model.dart';
 import '../../../domain/model/movie_model.dart';
 import '../../../presentation/states/data_state.dart';
 import '../../datasources/local/movies_database.dart';
-import '../interfaces/i_database_repository.dart';
 
-class DatabaseRepository implements IDatabaseRepository {
-  final MoviesDatabase moviesDatabase;
+abstract class IDatabaseRepository {
+  Future<void> saveMovie(MovieModel movie, Endpoints endpoint);
 
-  DatabaseRepository(
+  Future<DataState<List<MovieModel>>> getSavedMovies(Endpoints endpoint);
+
+  Future<MovieModel?> getMovieById(MovieModel movie);
+
+  Future<void> saveGenre(GenreModel genre);
+
+  Future<DataState<List<GenreModel>>> getSavedGenres();
+
+  Future<GenreModel?> getGenreById(GenreModel genre);
+}
+
+class DatabaseRepositoryImpl implements IDatabaseRepository {
+  MoviesDatabase? moviesDatabase;
+
+  DatabaseRepositoryImpl(
     this.moviesDatabase,
   );
 
