@@ -6,7 +6,7 @@ import '../interface/i_service.dart';
 
 class MoviesServiceImpl implements IService {
   final IMoviesRepository moviesRepository;
-  final DatabaseRepositoryImpl databaseRepository;
+  final IDatabaseRepository databaseRepository;
 
   MoviesServiceImpl({
     required this.moviesRepository,
