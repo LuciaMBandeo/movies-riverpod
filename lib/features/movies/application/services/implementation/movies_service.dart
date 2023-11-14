@@ -23,7 +23,8 @@ class MoviesServiceImpl implements IService {
           databaseRepository.saveMovie(movie, params);
         });
         return DataSuccess(remoteMovies.data!.results);
-      } else {
+      }
+      else {
         final savedMovies = await databaseRepository.getSavedMovies(params);
         if (savedMovies.data!.isEmpty) {
           return const DataEmpty();
