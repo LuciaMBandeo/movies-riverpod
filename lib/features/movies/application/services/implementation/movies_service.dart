@@ -2,7 +2,7 @@ import '../../../data/repository/implementation/database_repository_impl.dart';
 import '../../../data/repository/implementation/movies_repository_impl.dart';
 import '../../../domain/model/movie_model.dart';
 import '../../../presentation/states/data_state.dart';
-import '../interface/IService.dart';
+import '../interface/i_service.dart';
 
 class MoviesServiceImpl implements IService {
   final IMoviesRepository moviesRepository;

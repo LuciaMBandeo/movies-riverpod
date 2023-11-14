@@ -76,7 +76,7 @@ class _HomePageAppBarState extends State<HomePageAppBar>
               widget.tabController.index,
             );
           } catch (e) {
-            print(Exception(e));
+            Exception(e);
           }
         },
       ),

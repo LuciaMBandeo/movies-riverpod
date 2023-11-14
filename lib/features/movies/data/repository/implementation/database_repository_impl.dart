@@ -19,7 +19,7 @@ abstract class IDatabaseRepository {
 }
 
 class DatabaseRepositoryImpl implements IDatabaseRepository {
-  MoviesDatabase? moviesDatabase;
+  MoviesDatabase moviesDatabase;
 
   DatabaseRepositoryImpl(
     this.moviesDatabase,
