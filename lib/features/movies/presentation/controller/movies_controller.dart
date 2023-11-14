@@ -2,8 +2,7 @@ import 'dart:async';
 
 import '../../../../constants/strings.dart';
 import '../../../../utils/enums/endpoints.dart';
-import '../../application/services/implementation/genres_service.dart';
-import '../../application/services/implementation/movies_service.dart';
+import '../../application/services/interface/i_service.dart';
 import '../../data/dto/movie_preview_dto.dart';
 import '../../domain/model/genre_model.dart';
 import '../../domain/model/movie_model.dart';
@@ -16,8 +15,8 @@ class MoviesController implements IController {
     required this.moviesService,
   });
 
-  final GenresServiceImpl genresService;
-  final MoviesServiceImpl moviesService;
+  final IService genresService;
+  final IService moviesService;
   final _popularMovies =
       StreamController<DataState<List<MoviePreviewDto>>>.broadcast();
   final _topRatedMovies =

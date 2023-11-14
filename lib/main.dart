@@ -5,7 +5,7 @@ import 'utils/dependency_handler.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DependencyHandler dependencyHandler = DependencyHandler();
-  await dependencyHandler.initializeProviders();
+  await dependencyHandler.initializeDB();
 
   runApp(
     const ProviderScope(child: MyApp()),
