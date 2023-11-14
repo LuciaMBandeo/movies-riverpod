@@ -12,62 +12,62 @@ import '../features/movies/data/repository/implementation/movies_repository_impl
 class DependencyHandler {
   static const String _databaseName = 'movies_database.db';
 
-  final client = Provider<Client>((ref) => Client());
+  Future<void> initializeProviders() async {
+    final client = Provider<Client>((ref) => Client());
 
-  final moviesDatabase = FutureProvider<MoviesDatabase>(
-    (ref) async =>
-        await $FloorMoviesDatabase.databaseBuilder(_databaseName).build(),
-  );
+    MoviesDatabase database =
+        await $FloorMoviesDatabase.databaseBuilder(_databaseName).build();
 
-  final apiDataSource = Provider<IApiDataSource>(
-    (ref) => ApiDataSourceImpl(
-      client: ref.watch(
-        client,
+    final moviesDatabaseProvider = Provider((ref) => database);
+
+    final apiDataSource = Provider<IApiDataSource>(
+      (ref) => ApiDataSourceImpl(
+        client: ref.watch(
+          client,
+        ),
       ),
-    ),
-  );
+    );
 
-  final moviesRepository = Provider<IMoviesRepository>(
-    (ref) => MoviesRepositoryImpl(
-      apiDataSource: ref.watch(
-        apiDataSource,
+    final moviesRepository = Provider<IMoviesRepository>(
+      (ref) => MoviesRepositoryImpl(
+        apiDataSource: ref.watch(
+          apiDataSource,
+        ),
       ),
-    ),
-  );
+    );
 
-  final databaseRepository = Provider<IDatabaseRepository>(
-    (ref) => DatabaseRepositoryImpl(
-      ref.watch(moviesDatabase),
-    ),
-  );
-
-  final genresRepository = Provider<IGenresRepository>(
-    (ref) => GenresRepositoryImpl(
-      apiDataSource: ref.watch(
-        apiDataSource,
+    final databaseRepository = Provider<IDatabaseRepository>(
+      (ref) => DatabaseRepositoryImpl(
+        ref.watch(
+          moviesDatabaseProvider,
+        ),
       ),
-    ),
-  );
+    );
 
-  final moviesService = Provider<IService>(
-    (ref) => MoviesServiceImpl(
-      moviesRepository: ref.watch(moviesRepository),
-      databaseRepository: ref.watch(
-        databaseRepository,
+    final genresRepository = Provider<IGenresRepository>(
+      (ref) => GenresRepositoryImpl(
+        apiDataSource: ref.watch(
+          apiDataSource,
+        ),
       ),
-    ),
-  );
+    );
 
-  final genresService = Provider<IService>(
-    (
+    final moviesService = Provider<IService>(
+      (ref) => MoviesServiceImpl(
+        moviesRepository: ref.watch(moviesRepository),
+        databaseRepository: ref.watch(
+          databaseRepository,
+        ),
+      ),
+    );
+
+    final genresService = Provider<IService>(
       (ref) => GenresServiceImpl(
-            genresRepository: ref.watch(genresRepository),
-            databaseRepository: ref.watch(
-              databaseRepository,
-            ),
-          ),
-    ),
-  );
+        genresRepository: ref.watch(genresRepository),
+        databaseRepository: ref.watch(databaseRepository),
+      ),
+    );
+  }
 
 //BLoC is left
 }

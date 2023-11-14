@@ -7,7 +7,7 @@ import '../../../presentation/states/data_state.dart';
 
 class GenresServiceImpl implements IService {
   final IGenresRepository genresRepository;
-  final DatabaseRepositoryImpl databaseRepository;
+  final IDatabaseRepository databaseRepository;
 
   GenresServiceImpl({
     required this.genresRepository,
