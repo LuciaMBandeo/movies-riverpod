@@ -19,7 +19,9 @@ class UpcomingMoviesCategory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final upcomingStream = ref.watch(moviesControllerStreamProvider(endpoint));
+    final upcomingStream = ref.watch(
+      moviesControllerStreamProvider(endpoint),
+    );
     return upcomingStream.when(
       loading: () => const CircularProgressIndicator(),
       data: (data) => Scaffold(
@@ -41,7 +43,13 @@ class UpcomingMoviesCategory extends ConsumerWidget {
           ),
         ),
       ),
-      error: (error, stackTrace) => Text('Error: $error'),
+      error: (
+        error,
+        stackTrace,
+      ) =>
+          Text(
+        'Error: $error',
+      ),
     );
   }
 }

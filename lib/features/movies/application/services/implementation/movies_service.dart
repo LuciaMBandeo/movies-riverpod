@@ -20,16 +20,22 @@ class MoviesServiceImpl implements IService {
       if (remoteMovies is DataSuccess) {
         await Future.forEach(remoteMovies.data!.results,
             (MovieModel movie) async {
-          databaseRepository.saveMovie(movie, params);
+          databaseRepository.saveMovie(
+            movie,
+            params,
+          );
         });
-        return DataSuccess(remoteMovies.data!.results);
-      }
-      else {
+        return DataSuccess(
+          remoteMovies.data!.results,
+        );
+      } else {
         final savedMovies = await databaseRepository.getSavedMovies(params);
         if (savedMovies.data!.isEmpty) {
           return const DataEmpty();
         } else {
-          return DataSuccess(savedMovies.data!);
+          return DataSuccess(
+            savedMovies.data!,
+          );
         }
       }
     } catch (e) {

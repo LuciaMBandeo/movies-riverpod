@@ -10,6 +10,7 @@ class NamedRoutes {
 }
 
 class MovieRouter {
+  //no agregamos la pagina de about the app aun,queda TODO
   static Map<String, WidgetBuilder> routes() {
     return {
       NamedRoutes.homePage: (BuildContext context) => const HomePage(),

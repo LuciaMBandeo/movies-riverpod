@@ -11,7 +11,6 @@ class DatabaseInitializer {
   }
 
   MoviesDatabase getDatabaseInstance() {
-    // WidgetsFlutterBinding.ensureInitialized();
     _initializeDB();
     return _databaseInstance;
   }

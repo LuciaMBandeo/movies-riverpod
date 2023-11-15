@@ -74,7 +74,6 @@ class MoviesController {
 
   Future<void> fetchEndpointsMovies(Endpoints endpoint) async {
     List<MovieModel> movieListEndpoint = [];
-    //addStateStream(endpoint, result); este era el del loading
     try {
       final result = await moviesService.call(
         params: endpoint,

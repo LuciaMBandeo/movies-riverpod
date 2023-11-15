@@ -45,7 +45,9 @@ class ApiDataSourceImpl implements IApiDataSource {
         );
       }
     } catch (e) {
-      return DataFailure(Exception(e));
+      return DataFailure(
+        Exception(e),
+      );
     }
   }
 
@@ -63,7 +65,9 @@ class ApiDataSourceImpl implements IApiDataSource {
         );
       } else {
         return DataFailure(
-          Exception(Strings.errorText),
+          Exception(
+            Strings.errorText,
+          ),
         );
       }
     } catch (e) {

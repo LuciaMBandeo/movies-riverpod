@@ -32,7 +32,7 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
   ) async {
     MovieModel? existingMovie = await getMovieById(movie);
     if (existingMovie != null) {
-      if (!existingMovie.category.contains(endpoint.endpointName)) {
+      if (!existingMovie.category.contains(endpoint.endpointName),) {
         existingMovie.category.add(endpoint.endpointName);
         await moviesDatabase.moviesDao.insertMovie(existingMovie);
       }
@@ -51,7 +51,7 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
           await moviesDatabase.moviesDao.fetchMovies(endpoint.endpointName);
       return DataSuccess(savedMovies);
     } catch (e) {
-      return DataFailure(Exception(e));
+      return DataFailure(Exception(e),);
     }
   }
 
