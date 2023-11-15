@@ -2,17 +2,12 @@ import '../../../../../constants/strings.dart';
 import 'movies_database.dart';
 
 class DatabaseInitializer {
-  late MoviesDatabase _databaseInstance;
-
-  Future<void> _initializeDB() async {
-    _databaseInstance = await $FloorMoviesDatabase
+  Future<MoviesDatabase> initializeDB() async {
+    MoviesDatabase databaseInstance;
+    databaseInstance = await $FloorMoviesDatabase
         .databaseBuilder(Strings.databaseName)
         .build();
-  }
 
-  MoviesDatabase getDatabaseInstance() {
-    // WidgetsFlutterBinding.ensureInitialized();
-    _initializeDB();
-    return _databaseInstance;
+    return databaseInstance;
   }
 }
