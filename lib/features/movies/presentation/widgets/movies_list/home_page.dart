@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../utils/enums/pages.dart';
 import '../../../../../utils/providers.dart';
 import '../../controller/movies_controller.dart';
@@ -11,10 +10,37 @@ import 'popular_movies_category.dart';
 import 'top_rated_movies_category.dart';
 import 'upcoming_movies_category.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({
     super.key,
   });
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage>
+    with TickerProviderStateMixin {
+  late final PageController pageController;
+  late final TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(
+      length: Pages.values.length,
+      vsync: this,
+    );
+    pageController = PageController();
+    ref.read(moviesControllerProvider);
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    pageController.dispose();
+    super.dispose();
+  }
 
   Widget getList(Pages pages, MoviesController moviesController) {
     switch (pages) {
@@ -38,14 +64,9 @@ class HomePage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final moviesController = ref.watch(moviesControllerProvider);
-    final TickerProvider tickerProvider = ref.context.widget as TickerProvider;
-    final PageController pageController = PageController();
-    final TabController tabController = TabController(
-      length: Pages.values.length,
-      vsync: tickerProvider,
-    );
+
     return Scaffold(
       appBar: HomePageAppBar(
         pageController: pageController,
@@ -58,7 +79,11 @@ class HomePage extends ConsumerWidget {
         child: PageView(
           controller: pageController,
           children: [
-            for (Pages pages in Pages.values) getList(pages, moviesController),
+            for (Pages pages in Pages.values)
+              getList(
+                pages,
+                moviesController,
+              ),
           ],
           onPageChanged: (int index) {
             tabController.animateTo(index);
