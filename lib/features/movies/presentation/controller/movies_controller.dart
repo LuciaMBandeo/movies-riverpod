@@ -1,15 +1,13 @@
 import 'dart:async';
 
-import '../../../../constants/strings.dart';
 import '../../../../utils/enums/endpoints.dart';
 import '../../application/services/interface/i_service.dart';
 import '../../data/dto/movie_preview_dto.dart';
 import '../../domain/model/genre_model.dart';
 import '../../domain/model/movie_model.dart';
 import '../states/data_state.dart';
-import 'i_controller.dart';
 
-class MoviesController implements IController {
+class MoviesController {
   MoviesController({
     required this.genresService,
     required this.moviesService,
@@ -17,33 +15,22 @@ class MoviesController implements IController {
 
   final IService genresService;
   final IService moviesService;
-  final _popularMovies =
-      StreamController<DataState<List<MoviePreviewDto>>>.broadcast();
-  final _topRatedMovies =
-      StreamController<DataState<List<MoviePreviewDto>>>.broadcast();
-  final _nowPlayingMovies =
-      StreamController<DataState<List<MoviePreviewDto>>>.broadcast();
-  final _upcomingMovies =
-      StreamController<DataState<List<MoviePreviewDto>>>.broadcast();
+  final _popularMovies = StreamController<List<MoviePreviewDto>>.broadcast();
+  final _topRatedMovies = StreamController<List<MoviePreviewDto>>.broadcast();
+  final _nowPlayingMovies = StreamController<List<MoviePreviewDto>>.broadcast();
+  final _upcomingMovies = StreamController<List<MoviePreviewDto>>.broadcast();
 
-  Stream<DataState<List<MoviePreviewDto>>> get popularMoviesStream =>
+  Stream<List<MoviePreviewDto>> get popularMoviesStream =>
       _popularMovies.stream;
 
-  Stream<DataState<List<MoviePreviewDto>>> get topRatedMoviesStream =>
+  Stream<List<MoviePreviewDto>> get topRatedMoviesStream =>
       _topRatedMovies.stream;
 
-  Stream<DataState<List<MoviePreviewDto>>> get nowPlayingMoviesStream =>
+  Stream<List<MoviePreviewDto>> get nowPlayingMoviesStream =>
       _nowPlayingMovies.stream;
 
-  Stream<DataState<List<MoviePreviewDto>>> get upcomingMoviesStream =>
+  Stream<List<MoviePreviewDto>> get upcomingMoviesStream =>
       _upcomingMovies.stream;
-
-  @override
-  void initialize() async {
-    fetchEndpointsMovies(
-      Endpoints.popular,
-    );
-  }
 
   ///Returns the genres corresponding to the list of genresId, or an empty list in case of error
   Future<List<GenreModel>> _fetchMoviesGenres(List<int> genresId) async {
@@ -59,7 +46,7 @@ class MoviesController implements IController {
 
   void addStateStream(
     Endpoints endpoint,
-    DataState<List<MoviePreviewDto>> result,
+    List<MoviePreviewDto> result,
   ) {
     switch (endpoint) {
       case Endpoints.popular:
@@ -87,7 +74,7 @@ class MoviesController implements IController {
 
   Future<void> fetchEndpointsMovies(Endpoints endpoint) async {
     List<MovieModel> movieListEndpoint = [];
-    addStateStream(endpoint, const DataLoading());
+    //addStateStream(endpoint, result); este era el del loading
     try {
       final result = await moviesService.call(
         params: endpoint,
@@ -117,31 +104,14 @@ class MoviesController implements IController {
         }).toList();
         addStateStream(
           endpoint,
-          DataSuccess(moviePreview),
-        );
-      } else {
-        addStateStream(
-          endpoint,
-          const DataEmpty(),
+          moviePreview,
         );
       }
     } catch (e) {
       return addStateStream(
         endpoint,
-        DataFailure(
-          Exception(
-            Strings.errorMovieNotFound,
-          ),
-        ),
+        [],
       );
     }
-  }
-
-  @override
-  void dispose() {
-    _popularMovies.close();
-    _topRatedMovies.close();
-    _nowPlayingMovies.close();
-    _upcomingMovies.close();
   }
 }

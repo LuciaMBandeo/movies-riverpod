@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'routing/movie_router.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -9,14 +11,15 @@ void main() async {
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // TODO: implement build
-    throw UnimplementedError();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      routes: MovieRouter.routes(),
+    );
   }
 }

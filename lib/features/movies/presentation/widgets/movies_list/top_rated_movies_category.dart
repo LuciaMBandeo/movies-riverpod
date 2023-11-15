@@ -1,87 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../constants/strings.dart';
 import '../../../../../utils/enums/endpoints.dart';
+import '../../../../../utils/providers.dart';
 import '../../controller/movies_controller.dart';
-import '../../states/data_state.dart';
 import 'list_widgets/list_container_movie_preview.dart';
 
-class TopRatedMoviesCategory extends StatefulWidget {
+class TopRatedMoviesCategory extends ConsumerWidget {
   const TopRatedMoviesCategory({
     super.key,
-    required this.moviesBloc,
+    required this.moviesController,
   });
 
-  final MoviesController moviesBloc;
-
-  @override
-  State<StatefulWidget> createState() => _TopRatedMoviesState();
-}
-
-class _TopRatedMoviesState extends State<TopRatedMoviesCategory> {
+  final MoviesController moviesController;
   final Endpoints endpoint = Endpoints.topRated;
 
   @override
-  void initState() {
-    super.initState();
-    widget.moviesBloc.fetchEndpointsMovies(
-      endpoint,
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final topRatedStream = ref.watch(moviesControllerStreamProvider(endpoint));
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () {
-            return widget.moviesBloc.fetchEndpointsMovies(
-              endpoint,
-            );
-          },
-          child: StreamBuilder(
-            stream: widget.moviesBloc.topRatedMoviesStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data is DataFailure) {
-                  return Text(
-                    snapshot.data!.error.toString(),
-                  );
-                } else if (snapshot.data is DataSuccess) {
-                  final movieList = snapshot.data?.data ?? [];
-                  return ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: movieList.length,
-                    itemBuilder: (
-                      BuildContext context,
-                      int index,
-                    ) {
-                      return ListContainerMoviePreview(
-                        movie: movieList[index],
-                      );
-                    },
-                  );
-                } else if (snapshot.data is DataEmpty) {
-                  return Column(
-                    children: [
-                      Image.asset(
-                        Strings.noMoviesFoundImagePath,
-                      ),
-                      const Text(Strings.errorMovieNotFound),
-                    ],
-                  );
-                }
-              }
-              return const CircularProgressIndicator();
+    return topRatedStream.when(
+      loading: () => const CircularProgressIndicator(),
+      data: (data) => Scaffold(
+        body: SafeArea(
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: data.length,
+            itemBuilder: (
+              BuildContext context,
+              int index,
+            ) {
+              return ListContainerMoviePreview(
+                movie: data[index],
+              );
             },
           ),
         ),
       ),
+      error: (error, stackTrace) => Text('Error: $error'),
     );
   }
 }
