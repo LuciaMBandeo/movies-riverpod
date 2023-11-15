@@ -1,95 +1,47 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../constants/strings.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../utils/enums/endpoints.dart';
 import '../../controller/movies_controller.dart';
-import '../../states/data_state.dart';
 import 'grid_widgets/grid_container_movie_preview.dart';
+import '../../../../../utils/providers.dart';
 
-
-class PopularMoviesCategory extends StatefulWidget {
+class PopularMoviesCategory extends ConsumerWidget {
   const PopularMoviesCategory({
     super.key,
-    required this.moviesBloc,
+    required this.moviesController,
   });
 
-  final MoviesController moviesBloc;
+  final MoviesController moviesController;
 
-  @override
-  State<StatefulWidget> createState() => _PopularMoviesState();
-}
-
-class _PopularMoviesState extends State<PopularMoviesCategory> {
   final Endpoints endpoint = Endpoints.popular;
   static const int _gridViewChildren = 2;
 
   @override
-  void initState() {
-    super.initState();
-    widget.moviesBloc.fetchEndpointsMovies(
-      endpoint,
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final popularStream = ref.watch(moviesControllerStreamProvider(endpoint));
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () {
-            return widget.moviesBloc.fetchEndpointsMovies(
-              endpoint,
-            );
-          },
-          child: StreamBuilder(
-            stream: widget.moviesBloc.popularMoviesStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data is DataFailure) {
-                  return Text(
-                    snapshot.data!.error.toString(),
-                  );
-                } else if (snapshot.data is DataSuccess) {
-                  final movieList = snapshot.data?.data ?? [];
-                  return GridView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: _gridViewChildren,
-                    ),
-                    itemCount: movieList.length,
-                    itemBuilder: (
-                      BuildContext context,
-                      int index,
-                    ) {
-                      return GridContainerMoviePreview(
-                        movie: movieList[index],
-                      );
-                    },
-                  );
-                } else if (snapshot.data is DataEmpty) {
-                  return Column(
-                    children: [
-                      Image.asset(
-                        Strings.noMoviesFoundImagePath,
-                      ),
-                      const Text(
-                        Strings.errorMovieNotFound,
-                      ),
-                    ],
-                  );
-                }
-              }
-              return const CircularProgressIndicator();
+    return popularStream.when(
+      loading: () => const CircularProgressIndicator(),
+      data: (data) => Scaffold(
+        body: SafeArea(
+          child: GridView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _gridViewChildren,
+            ),
+            itemCount: data.length,
+            itemBuilder: (
+              BuildContext context,
+              int index,
+            ) {
+              return GridContainerMoviePreview(
+                movie: data[index],
+              );
             },
           ),
         ),
       ),
+      error: (error, stackTrace) => Text('Error: $error'),
     );
   }
 }

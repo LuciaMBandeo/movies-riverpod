@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../../utils/enums/pages.dart';
+import '../../../../../utils/providers.dart';
 import '../../controller/movies_controller.dart';
 import '../common_widgets/drawer/home_drawer.dart';
 import '../common_widgets/home_page_app_bar.dart';
@@ -9,61 +11,41 @@ import 'popular_movies_category.dart';
 import 'top_rated_movies_category.dart';
 import 'upcoming_movies_category.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({
     super.key,
   });
 
-  @override
-  State<StatefulWidget> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  late final PageController pageController;
-  late final TabController tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(
-      length: Pages.values.length,
-      vsync: this,
-    );
-    pageController = PageController();
-  }
-
-  @override
-  void dispose() {
-    tabController.dispose();
-    pageController.dispose();
-    super.dispose();
-  }
-
-  Widget getList(Pages pages, MoviesController moviesBloc) {
+  Widget getList(Pages pages, MoviesController moviesController) {
     switch (pages) {
       case Pages.popular:
         return PopularMoviesCategory(
-          moviesBloc: moviesBloc,
+          moviesController: moviesController,
         );
       case Pages.topRated:
         return TopRatedMoviesCategory(
-          moviesBloc: moviesBloc,
+          moviesController: moviesController,
         );
       case Pages.nowPlaying:
         return NowPlayingMoviesCategory(
-          moviesBloc: moviesBloc,
+          moviesController: moviesController,
         );
       case Pages.upcoming:
         return UpcomingMoviesCategory(
-          moviesBloc: moviesBloc,
+          moviesController: moviesController,
         );
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final moviesBloc =
-        Provider.of<DependencyHandler>(context, listen: false).moviesBloc;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final moviesController = ref.watch(moviesControllerProvider);
+    final TickerProvider tickerProvider = ref.context.widget as TickerProvider;
+    final PageController pageController = PageController();
+    final TabController tabController = TabController(
+      length: Pages.values.length,
+      vsync: tickerProvider,
+    );
     return Scaffold(
       appBar: HomePageAppBar(
         pageController: pageController,
@@ -76,7 +58,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: PageView(
           controller: pageController,
           children: [
-            for (Pages pages in Pages.values) getList(pages, moviesBloc),
+            for (Pages pages in Pages.values) getList(pages, moviesController),
           ],
           onPageChanged: (int index) {
             tabController.animateTo(index);

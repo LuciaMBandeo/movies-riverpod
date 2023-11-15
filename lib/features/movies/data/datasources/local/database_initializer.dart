@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../constants/strings.dart';
 import 'movies_database.dart';
 
@@ -13,7 +10,7 @@ class DatabaseInitializer {
         .build();
   }
 
-  MoviesDatabase getDatabaseInstance(){
+  MoviesDatabase getDatabaseInstance() {
     // WidgetsFlutterBinding.ensureInitialized();
     _initializeDB();
     return _databaseInstance;
