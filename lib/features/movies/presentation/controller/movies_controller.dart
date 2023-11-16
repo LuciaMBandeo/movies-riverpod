@@ -2,8 +2,8 @@ import 'dart:async';
 
 import '../../../../utils/enums/endpoints.dart';
 import '../../data/dto/movie_preview_dto.dart';
-import '../../data/repository/implementation/genres_repository_impl.dart';
-import '../../data/repository/implementation/movies_repository_impl.dart';
+import '../../data/repository/genres_repository_impl.dart';
+import '../../data/repository/movies_repository_impl.dart';
 import '../../domain/model/genre_model.dart';
 import '../../domain/model/movie_model.dart';
 import '../states/data_state.dart';
@@ -16,6 +16,7 @@ class MoviesController {
 
   final IGenresRepository genresRepository;
   final IMoviesRepository moviesRepository;
+
   final _popularMovies = StreamController<List<MoviePreviewDto>>.broadcast();
   final _topRatedMovies = StreamController<List<MoviePreviewDto>>.broadcast();
   final _nowPlayingMovies = StreamController<List<MoviePreviewDto>>.broadcast();
