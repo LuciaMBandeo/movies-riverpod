@@ -1,20 +1,21 @@
 import 'dart:async';
 
 import '../../../../utils/enums/endpoints.dart';
-import '../../application/services/interface/i_service.dart';
 import '../../data/dto/movie_preview_dto.dart';
+import '../../data/repository/implementation/genres_repository_impl.dart';
+import '../../data/repository/implementation/movies_repository_impl.dart';
 import '../../domain/model/genre_model.dart';
 import '../../domain/model/movie_model.dart';
 import '../states/data_state.dart';
 
 class MoviesController {
   MoviesController({
-    required this.genresService,
-    required this.moviesService,
+    required this.genresRepository,
+    required this.moviesRepository,
   });
 
-  final IService genresService;
-  final IService moviesService;
+  final IGenresRepository genresRepository;
+  final IMoviesRepository moviesRepository;
   final _popularMovies = StreamController<List<MoviePreviewDto>>.broadcast();
   final _topRatedMovies = StreamController<List<MoviePreviewDto>>.broadcast();
   final _nowPlayingMovies = StreamController<List<MoviePreviewDto>>.broadcast();
@@ -34,9 +35,7 @@ class MoviesController {
 
   ///Returns the genres corresponding to the list of genresId, or an empty list in case of error
   Future<List<GenreModel>> _fetchMoviesGenres(List<int> genresId) async {
-    final result = await genresService.call(
-      params: genresId,
-    );
+    final result = await genresRepository.fetchGenresList();
     if (result is DataSuccess) {
       return result.data!;
     } else {
@@ -75,9 +74,7 @@ class MoviesController {
   Future<void> fetchEndpointsMovies(Endpoints endpoint) async {
     List<MovieModel> movieListEndpoint = [];
     try {
-      final result = await moviesService.call(
-        params: endpoint,
-      );
+      final result = await moviesRepository.fetchMoviesList(endpoint);
       if (result is DataSuccess) {
         movieListEndpoint = result.data!;
         List<GenreModel> genres = await _fetchMoviesGenres(
