@@ -24,14 +24,14 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
   Future<MoviesDatabase> moviesDatabase;
 
   DatabaseRepositoryImpl(
-      this.moviesDatabase,
-      );
+    this.moviesDatabase,
+  );
 
   @override
   Future<void> saveMovie(
-      MovieModel movie,
-      Endpoints endpoint,
-      ) async {
+    MovieModel movie,
+    Endpoints endpoint,
+  ) async {
     MoviesDatabase dbInstance = await moviesDatabase;
     MoviesDao moviesDao = dbInstance.moviesDao;
     MovieModel? existingMovie = await getMovieById(movie);
@@ -47,14 +47,13 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
 
   @override
   Future<DataState<List<MovieModel>>> getSavedMovies(
-      Endpoints endpoint,
-      ) async {
+    Endpoints endpoint,
+  ) async {
     MoviesDatabase dbInstance = await moviesDatabase;
     MoviesDao moviesDao = dbInstance.moviesDao;
     List<MovieModel> savedMovies = [];
     try {
-      savedMovies =
-      await moviesDao.fetchMovies(endpoint.endpointName);
+      savedMovies = await moviesDao.fetchMovies(endpoint.endpointName);
       return DataSuccess(savedMovies);
     } catch (e) {
       return DataFailure(Exception(e));
@@ -100,4 +99,3 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
     return genresDao.fetchGenreById(genre.id);
   }
 }
-

@@ -13,10 +13,12 @@ import '../features/movies/data/repository/implementation/movies_repository_impl
 import '../features/movies/presentation/controller/movies_controller.dart';
 import 'enums/endpoints.dart';
 
-final moviesDatabaseProvider = Provider<Future<MoviesDatabase>>((ref) async {
-  DatabaseInitializer dbInitializer = DatabaseInitializer();
-  return dbInitializer.initializeDB();
-});
+final moviesDatabaseProvider = Provider<Future<MoviesDatabase>>(
+  (ref) async {
+    DatabaseInitializer dbInitializer = DatabaseInitializer();
+    return dbInitializer.initializeDB();
+  },
+);
 
 final databaseRepository = Provider<IDatabaseRepository>(
   (ref) => DatabaseRepositoryImpl(
