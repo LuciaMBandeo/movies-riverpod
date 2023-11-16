@@ -2,6 +2,8 @@ import '../../../../../utils/enums/endpoints.dart';
 import '../../../domain/model/genre_model.dart';
 import '../../../domain/model/movie_model.dart';
 import '../../../presentation/states/data_state.dart';
+import '../../datasources/local/dao/genres_dao.dart';
+import '../../datasources/local/dao/movies_dao.dart';
 import '../../datasources/local/movies_database.dart';
 
 abstract class IDatabaseRepository {
@@ -19,7 +21,7 @@ abstract class IDatabaseRepository {
 }
 
 class DatabaseRepositoryImpl implements IDatabaseRepository {
-  MoviesDatabase moviesDatabase;
+  Future<MoviesDatabase> moviesDatabase;
 
   DatabaseRepositoryImpl(
     this.moviesDatabase,
@@ -30,14 +32,16 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
     MovieModel movie,
     Endpoints endpoint,
   ) async {
+    MoviesDatabase dbInstance = await moviesDatabase;
+    MoviesDao moviesDao = dbInstance.moviesDao;
     MovieModel? existingMovie = await getMovieById(movie);
     if (existingMovie != null) {
-      if (!existingMovie.category.contains(endpoint.endpointName),) {
+      if (!existingMovie.category.contains(endpoint.endpointName)) {
         existingMovie.category.add(endpoint.endpointName);
-        await moviesDatabase.moviesDao.insertMovie(existingMovie);
+        await moviesDao.insertMovie(existingMovie);
       }
     } else {
-      await moviesDatabase.moviesDao.insertMovie(movie);
+      await moviesDao.insertMovie(movie);
     }
   }
 
@@ -45,34 +49,41 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
   Future<DataState<List<MovieModel>>> getSavedMovies(
     Endpoints endpoint,
   ) async {
+    MoviesDatabase dbInstance = await moviesDatabase;
+    MoviesDao moviesDao = dbInstance.moviesDao;
     List<MovieModel> savedMovies = [];
     try {
-      savedMovies =
-          await moviesDatabase.moviesDao.fetchMovies(endpoint.endpointName);
+      savedMovies = await moviesDao.fetchMovies(endpoint.endpointName);
       return DataSuccess(savedMovies);
     } catch (e) {
-      return DataFailure(Exception(e),);
+      return DataFailure(Exception(e));
     }
   }
 
   @override
-  Future<MovieModel?> getMovieById(MovieModel movie) {
-    return moviesDatabase.moviesDao.fetchMovieById(movie.id);
+  Future<MovieModel?> getMovieById(MovieModel movie) async {
+    MoviesDatabase dbInstance = await moviesDatabase;
+    MoviesDao moviesDao = dbInstance.moviesDao;
+    return moviesDao.fetchMovieById(movie.id);
   }
 
   @override
   Future<void> saveGenre(GenreModel genre) async {
+    MoviesDatabase dbInstance = await moviesDatabase;
+    GenresDao genresDao = dbInstance.genresDao;
     GenreModel? existingGenre = await getGenreById(genre);
     if (existingGenre != null) {
-      await moviesDatabase.genresDao.insertGenre(genre);
+      await genresDao.insertGenre(genre);
     }
   }
 
   @override
   Future<DataState<List<GenreModel>>> getSavedGenres() async {
     List<GenreModel> savedGenres = [];
+    MoviesDatabase dbInstance = await moviesDatabase;
+    GenresDao genresDao = dbInstance.genresDao;
     try {
-      savedGenres = await moviesDatabase.genresDao.fetchGenres();
+      savedGenres = await genresDao.fetchGenres();
       return DataSuccess(savedGenres);
     } catch (e) {
       return DataFailure(
@@ -82,7 +93,9 @@ class DatabaseRepositoryImpl implements IDatabaseRepository {
   }
 
   @override
-  Future<GenreModel?> getGenreById(GenreModel genre) {
-    return moviesDatabase.genresDao.fetchGenreById(genre.id);
+  Future<GenreModel?> getGenreById(GenreModel genre) async {
+    MoviesDatabase dbInstance = await moviesDatabase;
+    GenresDao genresDao = dbInstance.genresDao;
+    return genresDao.fetchGenreById(genre.id);
   }
 }

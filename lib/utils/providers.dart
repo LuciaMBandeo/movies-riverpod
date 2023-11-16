@@ -13,8 +13,11 @@ import '../features/movies/data/repository/implementation/movies_repository_impl
 import '../features/movies/presentation/controller/movies_controller.dart';
 import 'enums/endpoints.dart';
 
-final moviesDatabaseProvider = Provider<MoviesDatabase>(
-  (ref) => DatabaseInitializer().getDatabaseInstance(),
+final moviesDatabaseProvider = Provider<Future<MoviesDatabase>>(
+  (ref) async {
+    DatabaseInitializer dbInitializer = DatabaseInitializer();
+    return dbInitializer.initializeDB();
+  },
 );
 
 final databaseRepository = Provider<IDatabaseRepository>(
@@ -74,18 +77,20 @@ final moviesControllerProvider = Provider<MoviesController>(
   ),
 );
 
-final moviesControllerStreamProvider = StreamProvider.family
-    .autoDispose<List<MoviePreviewDto>, Endpoints>((ref, endpoint) {
-  final moviesController = ref.watch(moviesControllerProvider);
-  moviesController.fetchEndpointsMovies(endpoint);
-  switch (endpoint) {
-    case Endpoints.popular:
-      return moviesController.popularMoviesStream;
-    case Endpoints.topRated:
-      return moviesController.topRatedMoviesStream;
-    case Endpoints.nowPlaying:
-      return moviesController.nowPlayingMoviesStream;
-    case Endpoints.upcoming:
-      return moviesController.upcomingMoviesStream;
-  }
-});
+final moviesControllerStreamProvider =
+    StreamProvider.family.autoDispose<List<MoviePreviewDto>, Endpoints>(
+  (ref, endpoint) {
+    final moviesController = ref.watch(moviesControllerProvider);
+    moviesController.fetchEndpointsMovies(endpoint);
+    switch (endpoint) {
+      case Endpoints.popular:
+        return moviesController.popularMoviesStream;
+      case Endpoints.topRated:
+        return moviesController.topRatedMoviesStream;
+      case Endpoints.nowPlaying:
+        return moviesController.nowPlayingMoviesStream;
+      case Endpoints.upcoming:
+        return moviesController.upcomingMoviesStream;
+    }
+  },
+);
